@@ -1,6 +1,7 @@
 # --------------------  IMPORT MODULES AND PACKAGES  ------------------------
 import streamlit as st
 import altair as alt
+import plotly.express as px
 from streamlit_card import card
 from streamlit_extras import add_vertical_space as avs 
 from streamlit_extras.dataframe_explorer import dataframe_explorer 
