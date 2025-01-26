@@ -191,7 +191,7 @@ def sales_predition():
     
     total_stock_needed = total_stock_needed.sort_values(by='Predicted Sales',ignore_index=True)
    
-    st.title('Daily sales of each product ')
+    st.title(f'Daily sales of each product next {days} days')
     avs.add_vertical_space(2) 
     st.write(predicted_sales_df) 
     
