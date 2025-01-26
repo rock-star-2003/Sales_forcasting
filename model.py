@@ -116,8 +116,8 @@ def future_sales(daily_sales,df,n_days):
 
 
     
-    product = "SELECT * FROM product"
-    product = pd.read_sql_query(product,conn)
+    product1 = "SELECT * FROM product"
+    product = pd.read_sql_query(product1,conn)
     predicted_future_sales = []
 
     def pfs(date, data):
@@ -163,7 +163,7 @@ def future_sales(daily_sales,df,n_days):
     total_stock_needed = predicted_sales_df.groupby(['p_id'])['Predicted Sales'].sum().reset_index()
     total_stock_needed = pd.merge(total_stock_needed, product, on='p_id', how='left')[['p_name', 'Predicted Sales']]
 
-    return total_stock_needed,predicted_sales_df
+    return total_stock_needed,predicted_sales_df,product
 
 # --------------------------------- about project ----------------------------------
 
@@ -184,6 +184,33 @@ def about_project ():
     product = pd.read_sql_query(product,conn)
     col2.subheader('product data ')
     col2.write(product)
+    
+    
+def product_update():
+    st.header('Product update')
+    product = "SELECT * FROM product"
+    product = pd.read_sql_query(product, conn)
+    st.write(product)
+    
+    st.subheader('Update product')
+    
+    # Create select options for product name
+    p_name = st.selectbox('Select product name', product['p_name'])
+    
+    # Get the selected product details
+    selected_product = product[product['p_name'] == p_name].iloc[0]
+    
+    # Auto fill the old values
+    with st.form(key='update_form'):
+        p_price = st.number_input('Product price', value=selected_product['p_price'])
+        p_discount = st.number_input('Product discount', value=selected_product['p_discount'])
+        submit_button = st.form_submit_button(label='Update product')
+    
+    if submit_button:
+        curser.execute(f"UPDATE product SET p_price = {p_price}, p_discount = {p_discount} WHERE p_name = '{p_name}'")
+        conn.commit()
+        st.success('Product updated successfully')
+
 
 def sales_predition():
     with st.sidebar:
@@ -196,19 +223,19 @@ def sales_predition():
                     
         #   ])
 
-    
-    total_stock_needed,predicted_sales_df = future_sales(daily_sales,df,days)
-    
+    total_stock_needed,predicted_sales_df,product = future_sales(daily_sales,df,days)
+    # Form to update discount and price
     total_stock_needed = total_stock_needed.sort_values(by='Predicted Sales',ignore_index=True)
-   
-    st.title(f'Daily sales of each product next {days} days')
+    col1,col2 = st.columns((1,1))
+    col1.subheader('Product Table')
+    col1.write(product)
+    col2.subheader(f'Daily sales of each product next {days} days')
     avs.add_vertical_space(2) 
-    st.write(predicted_sales_df) 
+    col2.write(predicted_sales_df) 
     
     st.divider()    
-    
     avs.add_vertical_space(2)
-    st.title(f'This gona be the next {days} days sales ')
+    col1.title(f'This gona be the next {days} days sales ')
     avs.add_vertical_space(2) 
     col1,col2 = st.columns((1,2)) 
     avs.add_vertical_space(1) 
@@ -272,6 +299,7 @@ def sales_analysis():
 home = st.Page(about_project,title='Home',icon='')
 predition = st.Page(sales_predition,title='')
 analysis = st.Page(sales_analysis,title='Sales Analysis',icon='')
+product = st.Page(product_update,title='Product Update',icon='')
 
 # -----------------------------------  streamlit app -----------------------------------
 
@@ -289,6 +317,7 @@ pg = st.navigation([
     home,
     analysis, 
     predition,
+    product
       ])
 
 
