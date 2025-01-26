@@ -173,6 +173,7 @@ def future_sales(daily_sales,df,n_days):
 
 def about_project ():
     st.header('About projuct')
+    st.link_button('visit colab file ',url="https://colab.research.google.com/drive/18nnQvtJBtKTy83ZUCSGhfAzXAzpJl7jI?usp=sharing")
     st.text('this is a sales analysis and future sales predition app')
     with st.expander("view source code"):
         st.code(open(__file__).read(), language="python")
