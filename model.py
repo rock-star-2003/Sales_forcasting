@@ -206,6 +206,9 @@ def sales_predition():
     col2.bar_chart(total_stock_needed,x='p_name',y='Predicted Sales',horizontal=True)
     st.divider()
     
+    with st.expander("view source code"):
+        st.code(inspect.getsource(future_sales), language="python")
+    
 def sales_analysis():
         filter = st.session_state.get('filter',daily_sales)
         filter = dataframe_explorer(filter)
