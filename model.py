@@ -5,7 +5,7 @@ import plotly.express as px
 from streamlit_card import card
 from streamlit_extras import add_vertical_space as avs 
 from streamlit_extras.dataframe_explorer import dataframe_explorer 
-
+import inspect
 
 import pandas as pd
 import numpy as np
@@ -29,6 +29,8 @@ curser = conn.cursor()
 # --------------------  Creating an dataframe of Sales data -----------------------
 sales = "SELECT * FROM sales"
 df = pd.read_sql_query(sales,conn)
+
+
 
 # -------------------- slicing the df for only needed features -------------------------------
 
@@ -172,8 +174,15 @@ def future_sales(daily_sales,df,n_days):
 def about_project ():
     st.header('About projuct')
     st.text('this is a sales analysis and future sales predition app')
-
-
+    with st.expander("view source code"):
+        st.code(open(__file__).read(), language="python")
+    col1,col2 = st.columns((1,1))
+    col1.subheader('the sales data')
+    col1.write(df)
+    product = "SELECT * FROM product"
+    product = pd.read_sql_query(product,conn)
+    col2.subheader('product data ')
+    col2.write(product)
 
 def sales_predition():
     with st.sidebar:
